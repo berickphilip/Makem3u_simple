@@ -33,22 +33,25 @@ for game in "${!games[@]}"; do
     # Clean up game name for directory creation (preserve brackets and other characters)
     clean_game_name=$(echo "$game" | sed 's/[^a-zA-Z0-9 ()]//g')
     
-    # Create a folder for the game with the clean game name
-    mkdir -p "$clean_game_name"
+    # Add the .m3u extension to the folder name
+    folder_name="${clean_game_name}.m3u"
+    
+    # Create a folder for the game with the .m3u extension
+    mkdir -p "$folder_name"
     
     # Move the discs into the game's folder
     echo "$disk_list" | while IFS= read -r disc; do
-        echo "Moving '$disc' to '$clean_game_name/'"  # Debugging output
-        mv -- "$disc" "$clean_game_name/"
+        echo "Moving '$disc' to '$folder_name/'"  # Debugging output
+        mv -- "$disc" "$folder_name/"
     done
     
     # Only create .m3u file if there are more than one disc
     if [ "$num_disks" -gt 1 ]; then
         # Create the .m3u file with the correct name
-        m3u_file="${clean_game_name}/${clean_game_name}.m3u"
+        m3u_file="${folder_name}/${clean_game_name}.m3u"
         
         # Write the list of discs to the .m3u file
-        echo "$disk_list" | sed "s#^#$clean_game_name/#" > "$m3u_file"
+        echo "$disk_list" | sed "s#^#$folder_name/#" > "$m3u_file"
         
         echo "Created $m3u_file with the following discs:"
         cat "$m3u_file"
